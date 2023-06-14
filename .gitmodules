@@ -1,0 +1,8 @@
+[submodule "tanuki-compiler"]
+        path = tanuki-compiler
+        url = https://github.com/FilipKon13/tanuki-compiler
+
+[submodule "tanuki-scripts"]
+        path = tanuki-scripts
+        url = https://github.com/DANDROZAVR/tanuki-scripts
+
