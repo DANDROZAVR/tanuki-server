@@ -17,10 +17,10 @@ type InsertScriptRequest {
     user: string,
     password: string,
     description: string, # what would be shown in user description
-    currentDir: string, # user + '/' + string
+    currentDir: string,  # user + '/' + string
     title: string,
     source: string,
-    pureJSCode: boolean # is code pureJS or should be compiled   
+    pureJSCode: boolean  # is code pureJS or should be compiled   
 };
 
 
