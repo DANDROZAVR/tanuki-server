@@ -23,7 +23,7 @@
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "puppeteer": "^19.9.1",
-    "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/master"
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "@types/node": "^18.16.3",

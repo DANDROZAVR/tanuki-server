@@ -15,7 +15,6 @@ const tasksPerUserRunning = {}
 
 // TODO: do refactor to change this array to JSON
 setInterval(() => {
-    console.log(tasksPerUserRunning)
     for (let i = workersInWork.length - 1; i >= 0; --i) {
         let toBeRemoved = false, ended = false
         const [, workerOptions, exitCode, , userSettings] = workersInWork[i]
