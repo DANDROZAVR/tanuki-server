@@ -2,12 +2,12 @@
 
 All JSON requests server support.
 
-- [InsertScript](#CreateUser)
+- [CreateUser](#CreateUser)
 - [InsertScript](#InsertScript)
-- [InsertScript](#UpdateScript)
-- [InsertScript](#ExecScript)
-- [InsertScript](#ScheduleScript)
-- [InsertScript](#UpdateUserSettings)
+- [UpdateScript](#UpdateScript)
+- [ExecScript](#ExecScript)
+- [ScheduleScript](#ScheduleScript)
+- [UpdateUserSettings](#UpdateUserSettings)
 
 
 # Requests
