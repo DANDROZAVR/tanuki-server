@@ -163,7 +163,7 @@ const ScheduleScript = {
       maxWaitMinute: 5, // max 5 minutes
     },
     scriptOptions: {
-		  member: 'value' // script will have access to this
+      member: 'value' // script will have access to this
     }
   }
 }
