@@ -15,7 +15,7 @@ All JSON requests server support.
 <a name="CreateUser"></a>
 ## CreateUser
 ```typescript
-type InsertScriptRequest {
+type CreateUser = {
   type: string,
   user: string,
   password: string
@@ -24,7 +24,7 @@ type InsertScriptRequest {
 
 ## Example
 ```typescript
-type InsertScriptRequest {
+const CreateUser = {
   type: 'createUser',
   user: 'user',
   password: 'user'
@@ -37,28 +37,28 @@ type InsertScriptRequest {
 <a name="InsertScript"></a>
 ## InsertScript
 ```typescript
-type InsertScriptRequest {
-    type: string,
-    user: string,
-    password: string,
-    description: string, # what would be shown in user description
-    currentDir: string, # user + '/' + string
-    title: string,
-    source: string,
-    pureJSCode?: boolean # is code pureJS or should be compiled   
+type InsertScript = {
+  type: string,
+  user: string,
+  password: string,
+  description: string, // what would be shown in user description
+  currentDir: string, // user + '/' + string
+  title: string,
+  source: string,
+  pureJSCode?: boolean // is code pureJS or should be compiled   
 };
 ```
 ## Example
 ```typescript
-{
-    type: 'insertScript',
-    user: 'user'
-    password: 'user'
-    description '',
-    currentDir: 'user/
-    title: 'mainScript'
-    source: 'exports.start = () => {}'
-    pureJSCode?: true
+const InsertScript = {
+  type: 'insertScript',
+  user: 'user',
+  password: 'user',
+  description: '',
+  currentDir: 'user/',
+  title: 'mainScript',
+  source: 'exports.start = () => {}',
+  pureJSCode: true
 };
 ```
 
@@ -69,29 +69,29 @@ type InsertScriptRequest {
 <a name="UpdateScript"></a>
 ## UpdateScript
 ```typescript
-type InsertScriptRequest {
-    type: string,
-    user: string,
-    password: string,
-    description: string, # what would be shown in user description
-    currentDir: string, # user + '/' + string
-    title: string,
-    source: string,
-    pureJSCode?: boolean # is code pureJS or should be compiled   
+type UpdateScript = {
+  type: string,
+  user: string,
+  password: string,
+  description: string, // what would be shown in user description
+  currentDir: string, // user + '/' + string
+  title: string,
+  source: string,
+  pureJSCode?: boolean // is code pureJS or should be compiled   
 };
 ```
 
 ## Example
 ```typescript
-{
-    type: 'updateScript',
-    user: 'user'
-    password: 'user'
-    description '',
-    currentDir: 'user/
-    title: 'mainScript'
-    source: 'load('https://developers.google.com/web/')' # new source code
-    pureJSCode?: false
+const UpdateScript = {
+  type: 'updateScript',
+  user: 'user',
+  password: 'user',
+  description: '',
+  currentDir: 'user/',
+  title: 'mainScript',
+  source: 'load("https://developers.google.com/web/")', // new source code
+  pureJSCode: false
 };
 ```
 
@@ -101,7 +101,7 @@ type InsertScriptRequest {
 <a name="ExecScript"></a>
 ## ExecScript
 ```typescript
-{
+type ExecScript = {
   type: string,
   user: string,
   password: string,
@@ -111,7 +111,7 @@ type InsertScriptRequest {
 ```
 ## Example
 ```typescript
-{
+const ExecScript = {
   type: 'execScript',
   user: 'user',
   password: 'user',
@@ -125,7 +125,7 @@ type InsertScriptRequest {
 <a name="ScheduleScript"></a>
 ## ScheduleScript
 ```typescript
-{
+type ScheduleScript = {
   type: 'scheduleScript',
   user: 'crypto',
   password: 'seedpassword',  
@@ -134,14 +134,14 @@ type InsertScriptRequest {
   scheduleOptions: {
     tag: 'times',
     times?: {
-      timesExecution number:
-      minWaitMinute: number, # min minutes waiting before next time script will be executed
-      maxWaitMinute: number, # max minutes
+      timesExecution: number,
+      minWaitMinute: number, // min minutes waiting before next time script will be executed
+      maxWaitMinute: number, // max minutes
     },
     once?: {
       date: Date
     }
-    # either "once" or "times" tag should be defined
+    // either "once" or "times" tag should be defined
     scriptOptions?: JSON,
   }
 }
@@ -149,7 +149,7 @@ type InsertScriptRequest {
 
 ## Example
 ```typescript
-{
+const ScheduleScript = {
   type: 'scheduleScript',
   user: 'crypto',
   password: 'seedpassword',  
@@ -157,13 +157,13 @@ type InsertScriptRequest {
   path: 'user/notion',
   scheduleOptions: {
     tag: 'times' | 'once',
-    times?: {
+    times: {
       timesExecution: 3,
-      minWaitMinute: 1, # min 1 minutes waiting before next time script will be executed
-      maxWaitMinute: 5, # max 5 minutes
+      minWaitMinute: 1, // min 1 minutes waiting before next time script will be executed
+      maxWaitMinute: 5, // max 5 minutes
     },
-    scriptOptions?: {
-		  member: 'value' # script will have access to this
+    scriptOptions: {
+		  member: 'value' // script will have access to this
     }
   }
 }
@@ -172,7 +172,7 @@ type InsertScriptRequest {
 <a name="UpdateUserSettings"></a>
 ## UpdateUserSettings
 ```typescript
-{
+type UpdateUserSettings = {
   type: 'updateUserSettings',
   user: 'crypto',
   password: 'seedpassword',
@@ -183,11 +183,11 @@ type InsertScriptRequest {
 
 ## Example
 ```typescript
-{
-    type: 'updateUserSettings',
-        user: 'user',
-        password: 'user',
-        retryScriptOnFailDefault: 3,  # how many times script will be re-executed on error
-    maxScriptsRunningSameTime: 1  # max number of scripts running simmultiniously
+const UpdateUserSettings = {
+  type: 'updateUserSettings',
+  user: 'user',
+  password: 'user',
+  retryScriptOnFailDefault: 3,  // how many times script will be re-executed on error
+  maxScriptsRunningSameTime: 1  // max number of scripts running simmultiniously
 }
 ```
