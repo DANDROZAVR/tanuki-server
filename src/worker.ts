@@ -41,10 +41,8 @@ const asyncMainFunction = async () => {
     }
     const module = loadJSFromPath('../../' + pathToJS)
     let response = await module.start(workerData.lastRunFeedback, workerData.scriptOptions)
-    if (response === undefined)
-        response = {}
-    response['type'] = 'feedbackWorker'
-    parentPort?.postMessage(response)
+    const message = {content: response, type: 'feedbackWorker'}
+    parentPort?.postMessage(message)
     await waitForConfirmationFromMainThread()
 };
 

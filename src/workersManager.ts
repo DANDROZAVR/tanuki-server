@@ -107,7 +107,7 @@ const enableLogs = (worker: Worker) => {
     worker.on('message', (message) => {
         if (message.type == 'feedbackWorker') {
             const index = findWorker(worker)
-            workersInWork[index][3] = message
+            workersInWork[index][3] = message.content
             worker.postMessage('ok')
         }
     });
