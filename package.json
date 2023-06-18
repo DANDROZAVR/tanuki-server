@@ -8,7 +8,7 @@
     "start:dev": "npx node mon build/listener.js",
     "lint": "eslint . --  ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
-    "build-linux": "rimraf ./build && tsc && cd tanuki-compiler/src && make && cp compile ../../ && chmod +x ../../compile",
+    "build-linux": "rimraf ./build && tsc && cd tanuki-compiler && make && chmod +x out/* && cp out/* ../",
     "build-windows": "rimraf ./build && tsc",
     "test": "npm run build-linux && node build/localtest.js",
     "test2": "npm run build-windows && node build/localtest.js"
