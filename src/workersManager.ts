@@ -61,7 +61,6 @@ setInterval(() => {
     if (workersInWork.length <= 0 && workersWaiting.length) { // change
         // @ts-ignore
         const workerInfo : [string, any, number, any, userSettings] = workersWaiting.shift()
-        console.log(workersWaiting.length)
         // some problems wih adding workers?
         const worker = new Worker(workerInfo[0], workerInfo[1])
         console.log("worker created for task: " + workerInfo[1].workerData.script.title)
@@ -83,7 +82,6 @@ export const runWorker = (workerOptions: any, userSettings: UserSettings) : Prom
 }
 
 export const createWorker = (workerOptions: any, userSettings: UserSettings, callback: any = undefined, exitCode: number = 0)  => {
-    console.log(userSettings)
     if (callback != undefined) {
         workerOptions['callback'] = callback
     }
