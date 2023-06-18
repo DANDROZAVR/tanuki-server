@@ -14,7 +14,7 @@ import {
     updateScheduleOptionsByID,
     updateUserSettings
 } from "./sql/database"
-import {makeDirectory, saveJSToPath} from "./helpers/scriptsDymSaving"
+import {compileTnkJson, makeDirectory, saveJSToPath} from "./helpers/scriptsDymSaving"
 import {runWorker} from "./workersManager"
 import * as crypto from "crypto"
 import {deleteDirectory, deleteFromPath} from "./helpers/scriptsDymDeleting"
@@ -47,12 +47,24 @@ const checkContainsTags = (bodyJson: any, tags: string[]) : boolean => {
     return true
 }
 
-const createScriptPath = (currentDir: string, title: string, pureJSCode: boolean) => {
-    return `scripts/${currentDir}${title}${pureJSCode ? '.js' : '.tnk'}`
+const createScriptPath = (currentDir: string, title: string, pureJSCode: boolean, ending: string) => {
+    return `scripts/${currentDir}${title}${pureJSCode ? '.js' : ending}`
 }
 
-export const getScriptPath = (path: string, pureJSCode: boolean) => {
-    return "scripts/" + path + (pureJSCode ? '.js' : '.tnk')
+export const getScriptPath = (path: string, pureJSCode: boolean, ending: string = '.json') => {
+    return "scripts/" + path + (pureJSCode ? '.js' : ending)
+}
+
+const updateLocalScriptSource = async (path: string, pureJSCode: boolean, code: string, ending: string) => {
+    if (ending === '.tnk') {
+        // alright, let's transform it into nodes
+        await saveJSToPath(path, code)
+        if (!pureJSCode) // has something to compile  && code.length
+            await compileTnkJson(path, path.slice(0, -4) + '.json')
+        //await saveJSToPath(path.slice(0, -5) + '.tnk', bodyJson.source)
+    } else {
+        await saveJSToPath(path, code)
+    }
 }
 
 export const parseInsert = async (bodyJson: any) : Promise<void> => {
@@ -60,10 +72,13 @@ export const parseInsert = async (bodyJson: any) : Promise<void> => {
     if (!checkContainsTags(bodyJson, ['user', 'title', 'source', 'description', 'currentDir'])) {
         throw new DataError('not a valid insert request')
     }
-    const { title, user, source, description, currentDir, pureJSCode = false } = bodyJson
-    const path = createScriptPath(currentDir, title, pureJSCode)
+    const { title, user, description, currentDir, pureJSCode = false } = bodyJson
+    const {code, ending} = extractSourceCodeTnkJsOrJson(bodyJson)
+    const path = createScriptPath(currentDir, title, pureJSCode, ending)
     await insertPathByName(title, description, user, currentDir, false, pureJSCode)
-        .then(() => saveJSToPath(path, source))
+        .then(async _ => {
+            await updateLocalScriptSource(path, pureJSCode, code, ending)
+        })
         .catch((error) => {
             if (error.errno == 19) {
                 throw new DataError("Script with that name already exists")
@@ -71,6 +86,7 @@ export const parseInsert = async (bodyJson: any) : Promise<void> => {
                 throw error
             }
         })
+    return title
 }
 
 export const parseCreateDirectory = async (bodyJson: any): Promise<void> => {
@@ -91,19 +107,35 @@ export const parseCreateDirectory = async (bodyJson: any): Promise<void> => {
         })
 }
 
+const extractSourceCodeTnkJsOrJson = (bodyJson : any) => {
+    if ('source' in bodyJson) {
+        return {
+            code: bodyJson.source,
+            ending: '.tnk'
+        }
+    }
+    return {
+        code: bodyJson.sourceNodes,
+        ending: '.json'
+    }
+}
+
 export const parseUpdate = async (bodyJson: any) : Promise<string> => {
     await parseAuthenticate(bodyJson)
     if (!checkContainsTags(bodyJson, ['user', 'path', 'description', 'source'])) {
         throw new DataError('not a valid update request')
     }
-    const { user, path, description, source } = bodyJson
+    const { user, path, description} = bodyJson
+    const {code, ending} = extractSourceCodeTnkJsOrJson(bodyJson)
     const script: Path = await getPathByName(path, user)
     if (script === undefined || script.isDirectory) {
         throw new DataError("Script with that name does not exist")
     }
     await updatePathByName(description, script.path, user)
-        .then(_ => saveJSToPath(getScriptPath(script.path, script.pureJSCode), source))
-        .catch(error =>{
+        .then(async _ => {
+            updateLocalScriptSource(script.path, script.pureJSCode, code, ending)
+        })
+        .catch(error => {
             console.log(error)
                 throw error
         })
@@ -173,7 +205,8 @@ export const parseLoadScript = async (bodyJson: any) : Promise<Script> => {
     if (script === undefined || script.isDirectory) {
         throw new DataError("Script with that name does not exist")
     }
-    const source = loadFileFromPath(getScriptPath(script.path, script.pureJSCode)) // TODO: is this script.path same as path? fixt it then!
+    // SEBASTIAN: HERE YOU CAN CHANGE SMTH TO SUPPORT JSONS AS WELL
+    const source = loadFileFromPath(getScriptPath(script.path, script.pureJSCode, '.tnk')) // TODO: is this script.path same as path? fixt it then!
     return {title: script.title, source}
 }
 
