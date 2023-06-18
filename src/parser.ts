@@ -15,7 +15,7 @@ import {
     updateUserSettings
 } from "./sql/database"
 import {makeDirectory, saveJSToPath} from "./helpers/scriptsDymSaving"
-import {createWorker} from "./workersManager"
+import {runWorker} from "./workersManager"
 import * as crypto from "crypto"
 import {deleteDirectory, deleteFromPath} from "./helpers/scriptsDymDeleting"
 import {loadFileFromPath} from "./helpers/scriptsDymLoading"
@@ -144,7 +144,7 @@ export const parseDelete = async (bodyJson: any) : Promise<string> => {
     return path.title
 }
 
-export const parseExecute = async (bodyJson: any) : Promise<string> => {
+export const parseExecute = async (bodyJson: any) : Promise<{title: string, feedback?: any}> => {
     await parseAuthenticate(bodyJson)
     if (!checkContainsTags(bodyJson, ['user', 'path']))
         throw new DataError('not a valid execute request bro')
@@ -155,13 +155,13 @@ export const parseExecute = async (bodyJson: any) : Promise<string> => {
     }
     script.path = getScriptPath(script.path, script.pureJSCode)
     const userSettings = await getUserSettingsByUserName(bodyJson.user)
-    createWorker({
+    const feedback = await runWorker({
         workerData: {
             script: script,
             scriptOptions: bodyJson.scriptOptions
         }
-    }, userSettings)
-    return script.title
+    }, userSettings);
+    return {title: script.title, feedback: feedback}
 }
 
 export const parseLoadScript = async (bodyJson: any) : Promise<Script> => {

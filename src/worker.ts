@@ -37,7 +37,7 @@ const asyncMainFunction = async () => {
         pathToJS = pathToScript.slice(0, -4) + '-compiled.js'
         await compileScript(pathToScript, pathToJS)
     } else {
-        pathToJS = 'scripts/' + pathToScript + '.js' // TODO: wtf. why should I add script prefix here?
+        pathToJS = pathToScript
     }
     const module = loadJSFromPath('../../' + pathToJS)
     let response = await module.start(workerData.lastRunFeedback, workerData.scriptOptions)

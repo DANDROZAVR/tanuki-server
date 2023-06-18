@@ -73,7 +73,7 @@ const server = http.createServer((req, res) => {
             }
 
             const handleResponse = (status: number, message: string | object) => {
-                const response = JSON.stringify({ status, message });
+                const response = JSON.stringify({ status, message});
                 res.end(response);
             };
 
@@ -101,10 +101,12 @@ const server = http.createServer((req, res) => {
                     parseAction(parseDelete, (title: string) => `Deleted script ${title}`);
                     break;
                 case 'updateScript':
-                    parseAction(parseUpdate, (title: string) => `Saved script ${title}`);
+                    parseAction(parseUpdate, (title: string) => `Updated script ${title}`);
                     break;
                 case 'execScript':
-                    parseAction(parseExecute, (title: string) => `Running script ${title}`);
+                    parseAction(parseExecute, (response: {title: string, feedback?: string}) => {
+                        return { response:`Script ${response.title} has ended`, scriptFeedback: response.feedback };
+                    });
                     break;
                 case 'scheduleScript':
                     parseAction(parseSchedule, (result: Date) => `Scheduled on ${result}`);
@@ -137,12 +139,7 @@ const server = http.createServer((req, res) => {
                     parseAction(parseUpdateUserSettings, (response) => response);
                     break;
                 case 'signIn':
-                    parseAuthenticate(bodyJSON)
-                        .then(_ => handleResponse(0, 'Logged in successfully'))
-                        .catch(error => {
-                            console.log(error);
-                            handleResponse(1, error.message);
-                        });
+                    parseAction(parseAuthenticate, () => `Logged in successfully, dear ${bodyJSON.user}`);
                     break;
                 default:
                     handleResponse(1, 'Unknown request type');
