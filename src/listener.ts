@@ -106,7 +106,7 @@ const server = http.createServer((req, res) => {
                 case 'updateScript':
                     parseAction(parseUpdate, (title: string) => `Updated script ${title}`);
                     break;
-                    case 'execScript':
+                case 'execScript':
                     parseAction(parseExecute, (response: {title: string, feedback?: string}) => ({
                         message:`Script ${response.title} has ended`,
                         scriptFeedback: response.feedback
