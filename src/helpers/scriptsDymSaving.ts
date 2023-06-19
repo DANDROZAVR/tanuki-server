@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import {exec} from "child_process";
 export function ensureDirectoryExistence(filePath : string) {
     const dirname = path.dirname(filePath);
     if (fs.existsSync(dirname)) {
@@ -14,6 +15,7 @@ export function makeDirectory(path : string) {
     fs.mkdirSync(path);
 }
 export const saveJSToPath = (path: string, code: string) : Promise<boolean> => {
+    console.log(code)
     return new Promise((resolve, reject) => {
         fs.unlink(path, () => {
             ensureDirectoryExistence(path)
@@ -29,4 +31,31 @@ export const saveJSToPath = (path: string, code: string) : Promise<boolean> => {
         })
     })
 
+}
+
+const compilerPathTnkJson = process.platform === 'linux' ? './tnk2json' : 'tnk2json.exe';
+const compilerPathJsonJs = process.platform === 'linux' ? './json2js' : 'json2js.exe';
+
+const compilingFunction = async (compilerPath: string, pathToScript: string, outputPath: string) => {
+    await new Promise((resolve, reject) => {
+        exec(`${compilerPath} ${pathToScript} > ${outputPath}`, (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(undefined);
+            }
+        });
+    });
+}
+
+export const compileTnkJson = async (pathToScript: string, outputPath: string) => {
+    console.log(`Compiling ${pathToScript} from tnk to JSON`);
+    await compilingFunction(compilerPathTnkJson, pathToScript, outputPath)
+    console.log("Compiled")
+}
+
+export const compileJsonJs = async (pathToScript: string, outputPath: string) => {
+    console.log(`Compiling ${pathToScript} from JSON to JS`);
+    await compilingFunction(compilerPathJsonJs, pathToScript, outputPath)
+    console.log("Compiled")
 }

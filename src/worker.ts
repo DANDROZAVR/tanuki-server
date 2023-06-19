@@ -1,9 +1,8 @@
 import {loadJSFromPath} from "./helpers/scriptsDymLoading";
-import { exec } from "child_process";
+import {compileJsonJs} from "./helpers/scriptsDymSaving";
 
 const { isMainThread, workerData, parentPort } = require('node:worker_threads');
 // path to compiler (should be in top folder) - make sure you have binary for your platform
-const compilerPath = process.platform === 'linux' ? './compile' : 'compile.exe';
 
 const waitForConfirmationFromMainThread = async () => {
     let messagePromise = new Promise(resolve => {
@@ -17,25 +16,12 @@ const waitForConfirmationFromMainThread = async () => {
     parentPort?.close()
 }
 
-const compileScript = async (pathToScript: string, outputPath: string) => {
-    console.log(`Compiling ${pathToScript}`);
-    await new Promise((resolve, reject) => {
-        exec(`${compilerPath} < ${pathToScript} > ${outputPath}`, (err) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(undefined);
-            }
-        });
-    });
-}
-
 const asyncMainFunction = async () => {
     const pathToScript : string = workerData.script.path
     let pathToJS
     if (!workerData.script.pureJSCode) {
-        pathToJS = pathToScript.slice(0, -4) + '-compiled.js'
-        await compileScript(pathToScript, pathToJS)
+        pathToJS = pathToScript.slice(0, -5) + '-compiled.js'
+        await compileJsonJs(pathToScript, pathToJS)
     } else {
         pathToJS = pathToScript
     }

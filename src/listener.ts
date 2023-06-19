@@ -83,8 +83,11 @@ const server = http.createServer((req, res) => {
             ) => {
                 try {
                     const result = await action(bodyJSON);
+                    console.log('ended')
+                    console.log(result)
                     handleResponse(0, successMessage(result));
                 } catch (error: any) {
+                    console.log(error)
                     if (typeof error == "string") {
                         handleResponse(1, error);
                     } else {
@@ -104,9 +107,10 @@ const server = http.createServer((req, res) => {
                     parseAction(parseUpdate, (title: string) => `Updated script ${title}`);
                     break;
                 case 'execScript':
-                    parseAction(parseExecute, (response: {title: string, feedback?: string}) => {
-                        return { response:`Script ${response.title} has ended`, scriptFeedback: response.feedback };
-                    });
+                    parseAction(parseExecute, (response: {title: string, feedback?: string}) => ({
+                        message:`Script ${response.title} has ended`,
+                        scriptFeedback: response.feedback
+                    }));
                     break;
                 case 'scheduleScript':
                     parseAction(parseSchedule, (result: Date) => `Scheduled on ${result}`);

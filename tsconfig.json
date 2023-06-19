@@ -108,6 +108,7 @@
     },
     "exclude": [
         "scripts/**/*",
-        "tanuki-scripts/**/*"
+        "tanuki-scripts/**/*",
+        "tanuki-compiler/**/*"
     ]
 }
