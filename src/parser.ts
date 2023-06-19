@@ -108,15 +108,15 @@ export const parseCreateDirectory = async (bodyJson: any): Promise<void> => {
 }
 
 const extractSourceCodeTnkJsOrJson = (bodyJson : any) => {
-    if ('source' in bodyJson) {
+    if ('sourceNodes' in bodyJson) {
         return {
-            code: bodyJson.source,
-            ending: '.tnk'
+            code: bodyJson.sourceNodes,
+            ending: '.json'
         }
     }
     return {
-        code: bodyJson.sourceNodes,
-        ending: '.json'
+        code: bodyJson.source,
+        ending: '.tnk'
     }
 }
 
@@ -200,13 +200,19 @@ export const parseLoadScript = async (bodyJson: any) : Promise<Script> => {
     await parseAuthenticate(bodyJson)
     if (!checkContainsTags(bodyJson, ['user', 'path']))
         throw new DataError('not a valid load request')
-    const { path, user } = bodyJson
+    let { path, user } = bodyJson
+    let ending = '.tnk'
+    if (path.endsWith('.vtnk')) {
+        //path = path.slice(0, -5)
+        ending = '.json'
+    }
+    console.log(path)
     const script : Path = await getPathByName(path, user)
     if (script === undefined || script.isDirectory) {
         throw new DataError("Script with that name does not exist")
     }
     // SEBASTIAN: HERE YOU CAN CHANGE SMTH TO SUPPORT JSONS AS WELL
-    const source = loadFileFromPath(getScriptPath(script.path, script.pureJSCode, '.tnk')) // TODO: is this script.path same as path? fixt it then!
+    const source = loadFileFromPath(getScriptPath(script.path, script.pureJSCode, ending)) // TODO: is this script.path same as path? fixt it then!
     return {title: script.title, source}
 }
 
