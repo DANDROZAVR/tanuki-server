@@ -96,18 +96,18 @@ export function insertPathByID(title: string, description: string, userID: numbe
     })
 }
 
-export function updatePathByName(description: string, path: string, userName: string) : Promise<boolean> {
+export function updatePathByName(description: string, path: string, userName: string, pureJSCode: boolean) : Promise<boolean> {
     return new Promise((resolve, reject) => {
         getUserByName(userName)
-            .then(async user => resolve(await updatePathByID(description, path, user.id)))
+            .then(async user => resolve(await updatePathByID(description, path, user.id, pureJSCode)))
             .catch(error => reject(error))
     })
 }
 
-export function updatePathByID(description: string, path: string, userID: number): Promise<boolean> {
+export function updatePathByID(description: string, path: string, userID: number, pureJSCode: boolean): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-        const update = db.prepare("UPDATE paths SET description =? WHERE user = ? AND path = ?")
-        update.run([description, userID, path], (error) => {
+        const update = db.prepare("UPDATE paths SET description =?, pureJSCode=? WHERE user = ? AND path = ?")
+        update.run([description, pureJSCode, userID, path], (error) => {
             if (error == null) // TODO: could be non null but false? if not -- check only with if (error)
                 resolve(true); else
                 reject(error)

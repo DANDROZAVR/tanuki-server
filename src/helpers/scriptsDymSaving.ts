@@ -15,6 +15,7 @@ export function makeDirectory(path : string) {
     fs.mkdirSync(path);
 }
 export const saveJSToPath = (path: string, code: string) : Promise<boolean> => {
+    console.log(code)
     return new Promise((resolve, reject) => {
         fs.unlink(path, () => {
             ensureDirectoryExistence(path)

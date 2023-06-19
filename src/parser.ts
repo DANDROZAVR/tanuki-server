@@ -69,10 +69,10 @@ const updateLocalScriptSource = async (path: string, pureJSCode: boolean, code: 
 
 export const parseInsert = async (bodyJson: any) : Promise<void> => {
     await parseAuthenticate(bodyJson)
-    if (!checkContainsTags(bodyJson, ['user', 'title', 'source', 'description', 'currentDir'])) {
+    if (!checkContainsTags(bodyJson, ['user', 'title', 'source', 'description', 'currentDir', 'pureJSCode'])) {
         throw new DataError('not a valid insert request')
     }
-    const { title, user, description, currentDir, pureJSCode = false } = bodyJson
+    const { title, user, description, currentDir, pureJSCode } = bodyJson
     const {code, ending} = extractSourceCodeTnkJsOrJson(bodyJson)
     const path = createScriptPath(currentDir, title, pureJSCode, ending)
     await insertPathByName(title, description, user, currentDir, false, pureJSCode)
@@ -122,16 +122,16 @@ const extractSourceCodeTnkJsOrJson = (bodyJson : any) => {
 
 export const parseUpdate = async (bodyJson: any) : Promise<string> => {
     await parseAuthenticate(bodyJson)
-    if (!checkContainsTags(bodyJson, ['user', 'path', 'description', 'source'])) {
+    if (!checkContainsTags(bodyJson, ['user', 'path', 'description', 'source', 'pureJSCode'])) {
         throw new DataError('not a valid update request')
     }
-    const { user, path, description} = bodyJson
+    const { user, path, description, pureJSCode} = bodyJson
     const {code, ending} = extractSourceCodeTnkJsOrJson(bodyJson)
     const script: Path = await getPathByName(path, user)
     if (script === undefined || script.isDirectory) {
         throw new DataError("Script with that name does not exist")
     }
-    await updatePathByName(description, script.path, user)
+    await updatePathByName(description, script.path, user, pureJSCode)
         .then(async _ => {
             await updateLocalScriptSource(getScriptPath(script.path, script.pureJSCode, ending), script.pureJSCode, code, ending)
         })
