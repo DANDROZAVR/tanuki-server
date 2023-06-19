@@ -50,9 +50,11 @@ const compilingFunction = async (compilerPath: string, pathToScript: string, out
 export const compileTnkJson = async (pathToScript: string, outputPath: string) => {
     console.log(`Compiling ${pathToScript} from tnk to JSON`);
     await compilingFunction(compilerPathTnkJson, pathToScript, outputPath)
+    console.log("Compiled")
 }
 
 export const compileJsonJs = async (pathToScript: string, outputPath: string) => {
     console.log(`Compiling ${pathToScript} from JSON to JS`);
     await compilingFunction(compilerPathJsonJs, pathToScript, outputPath)
+    console.log("Compiled")
 }

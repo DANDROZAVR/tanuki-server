@@ -133,7 +133,7 @@ export const parseUpdate = async (bodyJson: any) : Promise<string> => {
     }
     await updatePathByName(description, script.path, user)
         .then(async _ => {
-            updateLocalScriptSource(script.path, script.pureJSCode, code, ending)
+            await updateLocalScriptSource(getScriptPath(script.path, script.pureJSCode, ending), script.pureJSCode, code, ending)
         })
         .catch(error => {
             console.log(error)
@@ -263,7 +263,7 @@ export const addToCalendar = async (script: any, options: any, firstTime: boolea
         if (!checkContainsTags(options, ['once'])) throw new DataError('not a valid schedule request')
         const onceOptions = options.once
         if (!checkContainsTags(onceOptions, ['date'])) throw new DataError('not a valid schedule request')
-        date = onceOptions.date
+        date = new Date(onceOptions.date)
     } else
     if (tag == 'every') {
         throw new DataError('not a valid schedule request')
